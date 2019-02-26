@@ -1,3 +1,5 @@
+// Asteroids class
+
 class Asteroid {
     constructor(args) {
         this.x = args[0];
@@ -12,6 +14,7 @@ class Asteroid {
         this.gravity = 0.1;
 
         this.orignalMass = this.mass;
+        
         let r = random();
         if (r>=0.5) {
             this.image = loadImage("pics/asteroid1.png");
@@ -20,14 +23,17 @@ class Asteroid {
         }
     }
     
+    // Return asteroid dimensions
     getArgs() {
         return [this.x, this.y, this.r];
     }
 
+    // Return starting mass of asteroid
     getMass() {
         return this.orignalMass;
     }
 
+    // Bounce off of walls and floor
     bounce() {
         if (this.y + this.r / 2 >= height) {
             this.y = height - this.r / 2;
@@ -44,6 +50,7 @@ class Asteroid {
         }
     }
 
+    // Update velocities in X and Y direction 
     updateSpeed() {
         this.bounce();
         this.y += this.velY;
@@ -51,10 +58,12 @@ class Asteroid {
         this.x += this.velX;
     }
 
+    // Decrease mass by 1
     updateMass() {
         this.mass--;
     }
 
+    // Check if mass is less than 0 or not
     checkMass() {
         if (this.mass <= 0) {
             return true;
@@ -62,6 +71,7 @@ class Asteroid {
         return false;
     }
 
+    // Display the asteroid
     show() {
         image(this.image, this.x - 3*this.r/4, this.y - 3*this.r/4,this.r * 1.45,this.r * 1.45);    
         fill(255);
@@ -72,7 +82,7 @@ class Asteroid {
             textSize(12);
         }
         text(this.mass, this.x, this.y);
-        noFill();
+        // noFill();
         // ellipse(this.x, this.y, this.r, this.r);
         
     }

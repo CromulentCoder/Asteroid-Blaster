@@ -1,3 +1,5 @@
+// Cannon class
+
 class Cannon {
     constructor(animation) {
         this.w = 80;
@@ -11,29 +13,37 @@ class Cannon {
         this.index = 0;
     }
 
+    // Return top center of the cannon
     getTop() {
         return [this.x + this.w / 2, this.y + 35];
     }
 
+    // Return the value of shoot
     getShoot() {
         return this.shoot;
     }
 
+    // Set the value of shoot
     setShoot() {
         this.shoot = true;
     }
 
+    // Unset the value of shoot
     unsetShoot() {
         this.shoot = false;
     }
 
+    // Update cannon's direction
     updateDir(dir) {
         this.dir = dir;
     }
+
+    // Update the position
     update() {
         this.x += 7 * this.dir;
     }
 
+    // Check if cannon hits the asteroid
     hits(asteroids) {
         for (let i = 0; i < asteroids.length; i++) {
             let circle = asteroids[i].getArgs();
@@ -47,29 +57,30 @@ class Cannon {
         return false;
     }
 
+    // Display the cannon
     show() {
-        // stroke(125);
-        // noFill();
-        // rect(this.x + 20, this.y + 35, this.w - 40, this.h);
         if (this.shoot == true) {
             image(this.animation[this.index % this.animation.length] , this.x, this.y, this.w, this.h);
             this.index ++;
         } else {
             image(this.animation[12], this.x, this.y, this.w, this.h);
         }
+
+        // stroke(125);
+        // noFill();
+        // rect(this.x + 20, this.y + 35, this.w - 40, this.h);
     }
 
+    // Bound the cannon within the canvas boundary
     constrain() {
         this.x = constrain(this.x, -20, width - this.w + 20);
     }
 
 }
 
+// Helper function to check if point lies on the ellipse or not
 const checkPoint = (h, k, x, y, r) => { 
-    // checking the equation of 
-    // ellipse with the given point 
     p = (pow((x - h), 2) / pow(r, 2)) 
             + (pow((y - k), 2) / pow(r, 2)); 
-  
     return p; 
 } 
