@@ -1,0 +1,75 @@
+class Cannon {
+    constructor(animation) {
+        this.w = 80;
+        this.h = 100;
+        this.x = width / 2 - this.w / 2 ;
+        this.y = height - this.h;
+        this.dir = 0;
+        this.shoot = false;
+
+        this.animation = animation;
+        this.index = 0;
+    }
+
+    getTop() {
+        return [this.x + this.w / 2, this.y + 35];
+    }
+
+    getShoot() {
+        return this.shoot;
+    }
+
+    setShoot() {
+        this.shoot = true;
+    }
+
+    unsetShoot() {
+        this.shoot = false;
+    }
+
+    updateDir(dir) {
+        this.dir = dir;
+    }
+    update() {
+        this.x += 7 * this.dir;
+    }
+
+    hits(asteroids) {
+        for (let i = 0; i < asteroids.length; i++) {
+            let circle = asteroids[i].getArgs();
+            if (checkPoint(circle[0], circle[1], this.x + 20, this.y + 35,circle[2] / 2)<= 1 || 
+            checkPoint(circle[0], circle[1], this.x + this.w - 40, this.y + 35,circle[2] / 2)<= 1 ||
+            checkPoint(circle[0], circle[1], this.x + 20, this.y + this.h,circle[2] / 2)<= 1 ||
+            checkPoint(circle[0], circle[1], this.x + this.w - 40, this.y + this.h,circle[2] / 2)<= 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    show() {
+        // stroke(125);
+        // noFill();
+        // rect(this.x + 20, this.y + 35, this.w - 40, this.h);
+        if (this.shoot == true) {
+            image(this.animation[this.index % this.animation.length] , this.x, this.y, this.w, this.h);
+            this.index ++;
+        } else {
+            image(this.animation[12], this.x, this.y, this.w, this.h);
+        }
+    }
+
+    constrain() {
+        this.x = constrain(this.x, -20, width - this.w + 20);
+    }
+
+}
+
+const checkPoint = (h, k, x, y, r) => { 
+    // checking the equation of 
+    // ellipse with the given point 
+    p = (pow((x - h), 2) / pow(r, 2)) 
+            + (pow((y - k), 2) / pow(r, 2)); 
+  
+    return p; 
+} 
