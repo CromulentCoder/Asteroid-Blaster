@@ -17,6 +17,7 @@ let score = 0;
 
 // Graphics
 let cannonAnimation = [];
+let asteroidImages = []; 
 let backgroundImage;
 
 // Load the images
@@ -25,6 +26,8 @@ window.preload = () => {
         cannonAnimation.push(loadImage("pics/frame" + i + ".png"));
     }
     backgroundImage = loadImage("pics/background.jpg");
+    asteroidImages[0] = loadImage("pics/asteroid.png");
+    asteroidImages[1] = loadImage("pics/asteroid1.png");
 }
 
 // Initialize objects
@@ -145,7 +148,7 @@ window.draw = () => {
             x = width + r / 2 ;
             dir = -1;
         }
-        asteroids.push(new Asteroid([x, y, r, dir, r + random(0,200)]));
+        asteroids.push(new Asteroid([x, y, r, dir, r + random(0,200)], asteroidImages));
     }
     counter++;
 
@@ -163,8 +166,8 @@ window.draw = () => {
                 let mass = asteroids[i].getMass();
                 asteroids.splice(i,1);
                 if (r / 2 >= 30) {
-                    asteroids.push(new Asteroid([x - r / 2, min(y, width/2), r / 2, -1, mass / 2]));
-                    asteroids.push(new Asteroid([x + r / 2, min(y, width/2), r / 2, 1, mass / 2]));
+                    asteroids.push(new Asteroid([x - r / 2, min(y, width/2), r / 2, -1, mass / 2], asteroidImages));
+                    asteroids.push(new Asteroid([x + r / 2, min(y, width/2), r / 2, 1, mass / 2], asteroidImages));
                 }
             }
 

@@ -1,7 +1,7 @@
 // Asteroids class
 
 class Asteroid {
-    constructor(args) {
+    constructor(args, images) {
         this.x = args[0];
         this.y = args[1]; 
         this.r = args[2];
@@ -15,12 +15,13 @@ class Asteroid {
 
         this.orignalMass = this.mass;
         
-        let r = random();
-        if (r>=0.5) {
-            this.image = loadImage("pics/asteroid1.png");
-        } else {
-            this.image = loadImage("pics/asteroid.png");
-        }
+        this.image = images[floor(random(2))]
+        // let r = random();
+        // if (r>=0.5) {
+        //     this.image = images[0];
+        // } else {
+        //     this.image = images[1];
+        // }
     }
     
     // Return asteroid dimensions
