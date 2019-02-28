@@ -1,0 +1,34 @@
+{
+  "name": "asteroid-blaster",
+  "version": "1.0.0",
+  "description": "Arcade game to destroy asteroids using a cannon",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.16.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CromulentCoder/Asteroid-Blaster.git"
+  },
+  "keywords": [
+    "Game",
+    "p5js",
+    "html5",
+    "Asteroids",
+    "blast"
+  ],
+  "author": "CromulentCoder",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/CromulentCoder/Asteroid-Blaster/issues"
+  },
+  "homepage": "https://github.com/CromulentCoder/Asteroid-Blaster#readme",
+  "engine": {
+    "node": "8.x"
+  }
+}
