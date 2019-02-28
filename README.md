@@ -6,9 +6,15 @@ The game is a survival based game where you have to dodge the asteroids falling 
 
 # How to Run
 
+1. Easy method:
+* Go to this link to play without any fuss: https://asteroid-blaster.herokuapp.com/
+
+2. Developer method:
 * Download this repository
-* If using FIREFOX, simply run the game (recommened)
-* If using CHROME, setup a local server to play the game
+* Install Nodejs
+* Download the packages in package.json
+* Start the node server using `node server.js`
+* Go to `localhost:3000`
 
 # How to Play (Controls)
 
