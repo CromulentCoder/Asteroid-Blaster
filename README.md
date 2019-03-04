@@ -33,6 +33,17 @@ The game is a survival based game where you have to dodge the asteroids falling 
 * Gameplay gif<br>
 ![gif](https://github.com/CromulentCoder/Asteroid-Blaster/blob/master/screenshots/gameplay.gif)
 
+# Features To Add:
+
+- [x] ~Basic Gameplay~
+- [x] ~Scoring mechanism~
+- [x] ~Graphics~
+- [ ] Mobile support
+- [ ] Upgrades For Cannon
+- [ ] Power-ups 
+
+If you have any suggestions for a feature or would like to help me add some features feel free to contact me.
+
 # Credits
 
 Programming & Design by CromulentCoder (author of this repo)
