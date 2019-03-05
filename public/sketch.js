@@ -92,14 +92,6 @@ if (isTouchScreen()) {
     }
 }
 
-// Stop shooting once the keys are released
-window.keyReleased = () => {
-    if (keyCode == LEFT_ARROW || keyCode == RIGHT_ARROW || keyCode == UP_ARROW) {
-        cannon.updateDir(0);
-        cannon.unsetShoot(false);
-    } 
-}
-
 // Pause game
 const pauseGame = () =>{
     gamePaused = true; 
@@ -212,7 +204,6 @@ window.draw = () => {
     };
 
     cannon.show();
-    cannon.update();
 
     // Update DOM elements
     if (score > highScore) {
