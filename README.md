@@ -1,8 +1,8 @@
 # Asteroid Blaster
 
-An arcade style, highly addictive game made using HTML5 canvas and p5js.
+An arcade style, highly addictive game made using HTML5 canvas and p5js.The game is a survival based game where you have to dodge the asteroids falling from above while destroying them. 
 
-The game is a survival based game where you have to dodge the asteroids falling from above while destroying them. 
+<h3>Supports both phones and PCs. Give a star if you like this!</h3>
 
 # How to Run
 
@@ -18,8 +18,8 @@ The game is a survival based game where you have to dodge the asteroids falling 
 
 # How to Play (Controls)
 
-* Move the cannon with your mouse
-* On touch-screens slide the cannon
+* On PCs, move the cannon with your mouse
+* On touch-screens slide the cannon with your finger
 * Your goal is to save your cannon while destroying as many asteroids as you can 
 
 # Screenshots
