@@ -13,13 +13,13 @@ The game is a survival based game where you have to dodge the asteroids falling 
 * Download this repository
 * Install Nodejs
 * Download the packages in package.json
-* Start the node server using `node server.js`
+* Start the node server using `node server.js` or `npm run dev` if using nodemon
 * Go to `localhost:3000`
 
 # How to Play (Controls)
 
-* Move with LEFT and RIGHT arrow keys
-* Shooting is automatic while moving or use UP arrow key to shoot without moving
+* Move the cannon with your mouse
+* On touch-screens slide the cannon
 * Your goal is to save your cannon while destroying as many asteroids as you can 
 
 # Screenshots
@@ -38,7 +38,7 @@ The game is a survival based game where you have to dodge the asteroids falling 
 - [x] ~Basic Gameplay~
 - [x] ~Scoring mechanism~
 - [x] ~Graphics~
-- [ ] Mobile support
+- [x] ~Mobile support~
 - [ ] Upgrades For Cannon
 - [ ] Power-ups 
 
