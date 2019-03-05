@@ -16,12 +16,6 @@ class Asteroid {
         this.orignalMass = this.mass;
         
         this.image = images[floor(random(2))]
-        // let r = random();
-        // if (r>=0.5) {
-        //     this.image = images[0];
-        // } else {
-        //     this.image = images[1];
-        // }
     }
     
     // Return asteroid dimensions

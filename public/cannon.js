@@ -32,15 +32,10 @@ class Cannon {
     unsetShoot() {
         this.shoot = false;
     }
-
-    // Update cannon's direction
-    updateDir(dir) {
-        this.dir = dir;
-    }
-
-    // Update the position
-    update() {
-        this.x += 7 * this.dir;
+    
+    // Update the cannon's X coordinate
+    updateX(X) {
+        this.x = X;
     }
 
     // Check if cannon hits the asteroid

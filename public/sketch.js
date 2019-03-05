@@ -32,35 +32,63 @@ window.preload = () => {
 
 // Initialize objects
 window.setup =  () => {
-    // Create game canvas
-    canvas = createCanvas(600, windowHeight);
-    canvas.parent('canvascontainer');
+    
+    // Responsiveness 
+    let w;
+    if (windowWidth <= 500) {
+        w = windowWidth;
+    } else {
+        w = 500;
+    }
+
+    // Create canvas
+    canvas = createCanvas(w, windowHeight);
+    canvas.parent("canvascontainer");
+
+    // Initialize cannon object
     cannon = new Cannon(cannonAnimation);
     
     // Add DOM elements
     scoreP = createP("High Score:" + highScore + "<br>Score:" + score).addClass("score");
     scoreP.parent("canvascontainer");
-    scoreP.position(width - width / 3,10);
+    scoreP.position(windowWidth / 2 - w / 2,10);
 }
 
-// Rules for controlling the cannon
-window.keyPressed = () => {
+// Check if it is a touch screen or not
+const isTouchScreen = () => {
+    return (('ontouchstart' in window)
+        || (navigator.MaxTouchPoints > 0)
+        || (navigator.msMaxTouchPoints > 0));
+}
 
-    // If game has not started, start the game on key press
-    if (start == false) {
-        start = true;
-        unpauseGame();
+// If it is a touch screen, use touches to play 
+if (isTouchScreen()) {
+    window.touchMoved = () => {
+        if (start == false) {
+            start = true;
+            unpauseGame();
+        }
+        cannon.updateX(touches[0].x);
+        cannon.setShoot();
+        return false;
     }
-
-    // Move and fire the cannon on pressing left & right arrow keys
-    if (keyCode == LEFT_ARROW) {
-        cannon.updateDir(-1);
-        cannon.setShoot(true);
-    } else if (keyCode == RIGHT_ARROW) {
-        cannon.updateDir(1);
-        cannon.setShoot(true);
-    } else if (keyCode == UP_ARROW) { // Only shoot if up arrow key is pressed
-        cannon.setShoot(true);
+    window.touchEnded = () => {
+        cannon.unsetShoot();
+        return false;
+    }
+} else { // Else use mouse to play
+    window.mouseDragged = () => {
+        if (start == false) {
+            start = true;
+            unpauseGame();
+        }
+        cannon.updateX(mouseX);
+        cannon.setShoot();
+        return false;
+    }
+    window.mouseReleased = () => {
+        cannon.unsetShoot();
+        return false;
     }
 }
 
@@ -106,7 +134,7 @@ window.draw = () => {
         fill(255);
         textAlign(CENTER);
         textSize(24);
-        text("Press any key to start", width / 2, height / 2);
+        text("Drag mouse / Slide to start", width / 2, height / 2);
     }
 
     cannon.constrain();
@@ -135,8 +163,8 @@ window.draw = () => {
         }
     }
 
-    // Keep adding asteroids every so often
-    if ((counter % 500 == 0 && counter!= 0) || counter == 2) {
+    // Keep adding asteroids every so often OR if no asteroids on screen
+    if ((counter % 300 == 0 || asteroids.length == 0) && counter!= 0) {
         let rand = floor(random(2));
         let x, dir;
         let y = random(50,150);
@@ -149,6 +177,7 @@ window.draw = () => {
             dir = -1;
         }
         asteroids.push(new Asteroid([x, y, r, dir, r + random(0,200)], asteroidImages));
+        counter = 0;
     }
     counter++;
 
@@ -166,8 +195,8 @@ window.draw = () => {
                 let mass = asteroids[i].getMass();
                 asteroids.splice(i,1);
                 if (r / 2 >= 30) {
-                    asteroids.push(new Asteroid([x - r / 2, min(y, width/2), r / 2, -1, mass / 2], asteroidImages));
-                    asteroids.push(new Asteroid([x + r / 2, min(y, width/2), r / 2, 1, mass / 2], asteroidImages));
+                    asteroids.push(new Asteroid([x - r / 2, min(y, 3 * cannon.getTop()[1]), r / 2, -1, mass / 2], asteroidImages));
+                    asteroids.push(new Asteroid([x + r / 2, min(y, 3 * cannon.getTop()[1]), r / 2, 1, mass / 2], asteroidImages));
                 }
             }
 
