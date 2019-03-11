@@ -1,0 +1,33 @@
+doctype html
+html
+    head
+        meta(charset='utf-8')
+        meta(name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable = no")
+        script(language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/p5.min.js")
+        script(language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/addons/p5.dom.min.js")
+        script(language="javascript" type="text/javascript" src="gamefiles/sketch.js")
+        script(language="javascript" type="text/javascript" src="gamefiles/cannon.js")
+        script(language="javascript" type="text/javascript" src="gamefiles/bullet.js")
+        script(language="javascript" type="text/javascript" src="gamefiles/asteroid.js")
+        link(rel='stylesheet' type='text/css' href='css/style.css')
+    body
+        .row.container
+            #canvascontainer.canvas-container.col-7
+            .scores-container.col-3
+                if results
+                    table.table 
+                        thead.table-header
+                            tr
+                                td(colspan =3 style = "text-align:center") Global Leaderboard
+                            tr
+                                td #
+                                td Name 
+                                td Score
+                        tbody.table-content
+        .footer.row 
+            .col-12
+                h3
+                    |Made with 
+                    span(style="color: #e25555;") &#9829;
+                    |by 
+                    a(href = "https://github.com/CromulentCoder/Asteroid-Blaster") CromulentCoder

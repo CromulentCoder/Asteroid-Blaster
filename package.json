@@ -4,8 +4,14 @@
   "description": "Arcade game to destroy asteroids using a cannon",
   "main": "server.js",
   "dependencies": {
+    "cookie-parser": "^1.4.4",
     "express": "^4.16.4",
-    "nodemon": "^1.18.10"
+    "morgan": "^1.9.1",
+    "mysql2": "^1.6.5",
+    "nodemon": "^1.18.10",
+    "pg": "^7.8.2",
+    "pug": "^2.0.3",
+    "sequelize": "^4.43.0"
   },
   "devDependencies": {},
   "scripts": {
@@ -21,6 +27,8 @@
     "Game",
     "p5js",
     "html5",
+    "responsive",
+    "mobile",
     "Asteroids",
     "blast"
   ],

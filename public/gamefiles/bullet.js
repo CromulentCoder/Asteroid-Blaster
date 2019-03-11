@@ -1,4 +1,8 @@
-// Bullet class
+/* Bullet class
+
+Made by Cromulent Coder (https://github.com/CromulentCoder)
+
+*/
 
 class Bullet {
     constructor(x, y) {

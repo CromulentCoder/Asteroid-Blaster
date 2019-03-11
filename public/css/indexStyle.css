@@ -1,0 +1,113 @@
+/* CSS FILE FOR HOME PAGE 
+
+Made by Cromulent Coder (https://github.com/CromulentCoder)
+
+*/
+
+body {
+    margin: 0;
+    background-image: url("../pics/background_image.jpg");
+    justify-content: center;
+    align-content: center;
+}
+
+
+.modal {
+    padding-top: 5%;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+div.modal-content {
+    position: relative;
+    border: none;
+    margin-left: 25%;
+    margin-right: 25%;
+    padding: 0;
+    width: 40%;
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s
+}
+
+@-webkit-keyframes animatetop {
+    from {
+        top: -300px;
+        opacity: 0
+    }
+
+    to {
+        top: 0;
+        opacity: 1
+    }
+}
+
+@keyframes animatetop {
+    from {
+        top: -300px;
+        opacity: 0
+    }
+
+    to {
+        top: 0;
+        opacity: 1
+    }
+}
+
+.modal-header, .modal-footer, .modal-body {
+    padding: 2px 16px;
+    color: white;
+    width: 100%;
+}
+
+.modal-footer {
+    text-align: center;
+}
+
+input[type = text]{
+    background: transparent;
+    opacity: 0.4;
+    width: 100%;
+    height: 5%;
+    margin: 1%;
+    border: none;
+    border-bottom: 4px solid black;
+    text-align: center;
+    justify-content: center;
+    font-size: 1.5em;
+    font-weight: 500;
+    color: white;
+}
+
+input::placeholder {
+    color: white;
+}
+
+input:hover, input:focus {
+    opacity: 0.8;
+    border-bottom: 2px solid black; 
+}
+
+input[type = submit] {
+    background:transparent;
+    border: none;
+    margin-top: 1%;
+    color:white;
+    width: 100%;
+    font-size: 1em;
+}
+
+input[type = submit]:hover {
+    opacity: 0.6;
+}
+
+a {
+    color: #e25555;
+    text-decoration: none;
+}
+
+a:visited {
+    color: #e25555;
+}

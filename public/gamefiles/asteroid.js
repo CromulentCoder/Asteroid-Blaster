@@ -1,4 +1,8 @@
-// Asteroids class
+/* Asteroid class
+
+Made by Cromulent Coder (https://github.com/CromulentCoder)
+
+*/
 
 class Asteroid {
     constructor(args, images) {

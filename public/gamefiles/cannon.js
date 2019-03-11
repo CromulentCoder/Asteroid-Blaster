@@ -1,4 +1,8 @@
-// Cannon class
+/* Cannon class
+
+Made by Cromulent Coder (https://github.com/CromulentCoder)
+
+*/
 
 class Cannon {
     constructor(animation) {

@@ -2,44 +2,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable = no">
-    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/p5.min.js"></script>
-    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/addons/p5.dom.min.js"></script>
-    <script language="javascript" type="text/javascript" src="sketch.js"></script>
-    <script language="javascript" type="text/javascript" src="cannon.js"></script>
-    <script language="javascript" type="text/javascript" src="bullet.js"></script>
-    <script language="javascript" type="text/javascript" src="asteroid.js"></script>
-    <style>
-        html,
-        body {
-            height: 100%;
-        }
-
-        body {
-            margin: 0;
-            display: flex;
-            background-color: black;
-
-            /* This centers the sketch horizontally. */
-            justify-content: center;
-
-            /* This centers the sketch vertically. */
-            align-items: center;
-        }
-
-        .score {
-            color: white;
-            margin-left: 2%;
-            margin-top: 0%;
-        }
-
-    </style>
+    <link rel = "stylesheet" type = "text/css" href = "css/indexStyle.css">
 </head>
 
 <body>
-    <div id="canvascontainer">
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Enter your epic name...</h2>
+            </div>
+            <div class="modal-body">
+                <form action = "/" method = "POST" name = "name">
+                    <input type = "text" name = "name" placeholder="Anonymous">
+                    <input type = "submit" value = "Submit">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <h3>Made with <span style="color: #e25555;">&#9829;</span> by <a href = "https://github.com/CromulentCoder/Asteroid-Blaster">CromulentCoder</a></h3>
+            </div>
+        </div>
     </div>
-
-
 </body>
-
 </html>

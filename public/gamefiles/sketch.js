@@ -1,3 +1,9 @@
+/* Driver file for the game
+
+Made by Cromulent Coder (https://github.com/CromulentCoder)
+
+*/
+
 // Start and pause game
 let gamePaused = false;
 let start = false;
@@ -15,10 +21,68 @@ let scoreP;
 let highScore = 0;
 let score = 0;
 
+// DOM elements for creating the table
+let table;
+let tbody; 
+let data;
+
 // Graphics
 let cannonAnimation = [];
 let asteroidImages = []; 
 let backgroundImage;
+
+// Create the type of element you pass in the parameters
+function createNode(element) {
+    return document.createElement(element); 
+}
+
+// Append the second parameter(element) to the first one
+function appendElement(parent, el) {
+return parent.appendChild(el); 
+}
+
+// Function to get data from database
+const getData = async (url = ``) => {
+    const response = await fetch(url);
+    let rows = await response.json();
+    let ctr = 1;
+    let newTbody = createNode('tbody');
+    rows.map((row) => {
+        let tr = createNode('tr'),
+            tdNumber = createNode('td'),
+            tdName = createNode('td'),
+            tdScore = createNode('td');
+        tr.classList.add("table-content");
+        tdNumber.innerHTML = `${ctr++}`;
+        tdName.innerHTML = `${row.name}`;
+        tdScore.innerHTML = `${row.score}`;
+        appendElement(tr, tdNumber);
+        appendElement(tr, tdName);
+        appendElement(tr, tdScore);
+        appendElement(newTbody, tr);
+    });
+    table.replaceChild(newTbody, tbody);
+    tbody = newTbody;
+}
+
+// Function to post data to database
+const postData = async (url = ``, data = {}) => {
+    const response = await fetch(url, {
+                        method: "POST",
+                        credentials: "same-origin", 
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(data)
+                    });
+    const json = await response.json();
+}
+
+// Update the leaderboard with the new scores
+const updateTable = async(urlget = ``,urlpost = ``, data = {}) => {
+    await postData(urlpost,data);
+    await getData(urlget);
+}
 
 // Load the images
 window.preload = () => {
@@ -33,25 +97,23 @@ window.preload = () => {
 // Initialize objects
 window.setup =  () => {
     
-    // Responsiveness 
-    let w;
-    if (windowWidth <= 500) {
-        w = windowWidth;
-    } else {
-        w = 500;
-    }
-
     // Create canvas
-    canvas = createCanvas(w, windowHeight);
-    canvas.parent("canvascontainer");
+    let canvasParent = document.getElementById("canvascontainer");
+    let w = canvasParent.offsetWidth * .9;
+    canvas = createCanvas(w, windowHeight*.95).addClass("col-11");
+    canvas.parent(canvasParent);
 
     // Initialize cannon object
     cannon = new Cannon(cannonAnimation);
     
     // Add DOM elements
-    scoreP = createP("High Score:" + highScore + "<br>Score:" + score).addClass("score");
-    scoreP.parent("canvascontainer");
-    scoreP.position(windowWidth / 2 - w / 2,10);
+    scoreP = createDiv("High Score:" + highScore + "<br>Score:" + score).addClass("canvas-score");
+    scoreP.parent(canvasParent);
+
+    table = document.getElementsByTagName("table")[0];
+    tbody = table.getElementsByTagName("tbody")[0];
+
+    getData("/sendData");
 }
 
 // Check if it is a touch screen or not
@@ -64,13 +126,15 @@ const isTouchScreen = () => {
 // If it is a touch screen, use touches to play 
 if (isTouchScreen()) {
     window.touchMoved = () => {
-        if (start == false) {
-            start = true;
-            unpauseGame();
+    if (touches[0].x >0 && touches[0].x < width && touches[0].y > 0 && touches[0].y < height){ // Check if touches within canvas
+            if (start == false) {
+                start = true;
+                unpauseGame();
+            }
+            cannon.updateX(touches[0].x);
+            cannon.setShoot();
+            return false;
         }
-        cannon.updateX(touches[0].x);
-        cannon.setShoot();
-        return false;
     }
     window.touchEnded = () => {
         cannon.unsetShoot();
@@ -78,19 +142,28 @@ if (isTouchScreen()) {
     }
 } else { // Else use mouse to play
     window.mouseDragged = () => {
-        if (start == false) {
-            start = true;
-            unpauseGame();
+        if (mouseX >0 && mouseX < width && mouseY > 0 && mouseY < height){ // Check if mouse within canvas
+            if (start == false) {
+                start = true;
+                unpauseGame();
+            }
+            cannon.updateX(mouseX);
+            cannon.setShoot();
+            return false;
         }
-        cannon.updateX(mouseX);
-        cannon.setShoot();
-        return false;
-    }
-    window.mouseReleased = () => {
-        cannon.unsetShoot();
-        return false;
+        window.mouseReleased = () => {
+            cannon.unsetShoot();
+            return false;
+        }
     }
 }
+
+// Resize canvas whenever window is resized
+window.windowResized = () =>{
+    let canvasParent = document.getElementById("canvascontainer");
+    let w = canvasParent.offsetWidth * .9;
+    resizeCanvas(w, windowHeight*.95);
+  }
 
 // Pause game
 const pauseGame = () =>{
@@ -114,9 +187,6 @@ const resetGame = () =>{
 
 
 window.draw = () => {
-    // If game is paused, return
-    if (gamePaused) return;
-
     // Background image
     image(backgroundImage, 0, 0, width, height);
 
@@ -128,6 +198,11 @@ window.draw = () => {
         textSize(24);
         text("Drag mouse / Slide to start", width / 2, height / 2);
     }
+
+    cannon.show();
+
+    // If game is paused, return
+    if (gamePaused) return;
 
     cannon.constrain();
 
@@ -200,10 +275,9 @@ window.draw = () => {
 
     // If cannon is hit, game over
     if (cannon.hits(asteroids)) {
+        updateTable("/sendData", "/updateTable", {"score":highScore});
         resetGame();
     };
-
-    cannon.show();
 
     // Update DOM elements
     if (score > highScore) {
