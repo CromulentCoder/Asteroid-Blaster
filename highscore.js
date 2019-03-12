@@ -36,4 +36,4 @@ sequelize.sync()
     .catch(error => console.log('This error occured:', error));
 
 // export Scores model.
-module.exports = { sequelize, Scores};
+module.exports = {Scores};

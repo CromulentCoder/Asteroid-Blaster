@@ -100,7 +100,7 @@ window.setup =  () => {
     // Create canvas
     let canvasParent = document.getElementById("canvascontainer");
     let w = canvasParent.offsetWidth * .9;
-    canvas = createCanvas(w, windowHeight*.95).addClass("col-11");
+    canvas = createCanvas(w, windowHeight*.90).addClass("col-11");
     canvas.parent(canvasParent);
 
     // Initialize cannon object
@@ -162,7 +162,7 @@ if (isTouchScreen()) {
 window.windowResized = () =>{
     let canvasParent = document.getElementById("canvascontainer");
     let w = canvasParent.offsetWidth * .9;
-    resizeCanvas(w, windowHeight*.95);
+    resizeCanvas(w, windowHeight*.90);
   }
 
 // Pause game
