@@ -163,6 +163,7 @@ window.windowResized = () =>{
     let canvasParent = document.getElementById("canvascontainer");
     let w = canvasParent.offsetWidth * .9;
     resizeCanvas(w, windowHeight*.90);
+    cannon.resetPos();
   }
 
 // Pause game

@@ -42,6 +42,12 @@ class Cannon {
         this.x = X;
     }
 
+    // Reset cannon's position to center bottom
+    resetPos() {
+        this.x = width / 2 - this.w / 2 ;
+        this.y = height - this.h;
+    }
+
     // Check if cannon hits the asteroid
     hits(asteroids) {
         for (let i = 0; i < asteroids.length; i++) {
