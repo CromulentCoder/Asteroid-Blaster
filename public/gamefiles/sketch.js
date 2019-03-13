@@ -5,6 +5,9 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
 */
 
 (function(){
+    // Create a socket
+    let socket;
+
     // Start and pause game
     let gamePaused = false;
     let start = false;
@@ -18,8 +21,8 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
     // DOM elements for score
     let canvas; 
     let scoreP;
-    let highScore = 0;
-    let score = 0;
+    let highScore;
+    let score;
 
     // DOM elements for creating the table
     let table;
@@ -30,72 +33,27 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
     let asteroidImages = []; 
     let backgroundImage;
 
-    // Create the type of element you pass in the parameters
-    function createNode(element) {
-        return document.createElement(element); 
-    }
-
-    // Append the second parameter(element) to the first one
-    function appendElement(parent, el) {
-    return parent.appendChild(el); 
-    }
-
-    // Function to get data from database
-    const getData = async (url = ``) => {
-        const response = await fetch(url);
-        let rows = await response.json();
-        let ctr = 1;
-        let newTbody = createNode('tbody');
-        rows.map((row) => {
-            let tr = createNode('tr'),
-                tdNumber = createNode('td'),
-                tdName = createNode('td'),
-                tdScore = createNode('td');
-            tr.classList.add("table-content");
-            tdNumber.innerHTML = `${ctr++}`;
-            tdName.innerHTML = `${row.name}`;
-            tdScore.innerHTML = `${row.score}`;
-            appendElement(tr, tdNumber);
-            appendElement(tr, tdName);
-            appendElement(tr, tdScore);
-            appendElement(newTbody, tr);
-        });
-        table.replaceChild(newTbody, tbody);
-        tbody = newTbody;
-    }
-
-    // Function to post data to database
-    const postData = async (url = ``, data = {}) => {
-        const response = await fetch(url, {
-                            method: "POST",
-                            credentials: "same-origin", 
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify(data)
-                        });
-        const json = await response.json();
-    }
-
-    // Update the leaderboard with the new scores
-    const updateTable = async(urlget = ``,urlpost = ``, data = {}) => {
-        await postData(urlpost,data);
-        await getData(urlget);
-    }
-
     // Load the images
     window.preload = () => {
         for (let i = 0; i < 13; i++) {
             cannonAnimation.push(loadImage("pics/frame" + i + ".png"));
         }
         backgroundImage = loadImage("pics/background.jpg");
-        asteroidImages[0] = loadImage("pics/asteroid.png");
-        asteroidImages[1] = loadImage("pics/asteroid1.png");
+        asteroidImages[0] = loadImage("pics/asteroid_black.png");
+        asteroidImages[1] = loadImage("pics/asteroid_blue.png");
+        
+        updateTable("/sendData");
+
+        socket = io.connect("localhost:3000");
+        socket.on("start", (data) => {
+            score = data.score;
+            highScore = data.score;
+        });
     }
 
     // Initialize objects
     window.setup =  () => {
-        
+
         // Create canvas
         let canvasParent = document.getElementById("canvascontainer");
         let w = canvasParent.offsetWidth * .9;
@@ -108,18 +66,6 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
         // Add DOM elements
         scoreP = createDiv("High Score:" + highScore + "<br>Score:" + score).addClass("canvas-score");
         scoreP.parent(canvasParent);
-
-        table = document.getElementsByTagName("table")[0];
-        tbody = table.getElementsByTagName("tbody")[0];
-
-        getData("/sendData");
-    }
-
-    // Check if it is a touch screen or not
-    const isTouchScreen = () => {
-        return (('ontouchstart' in window)
-            || (navigator.MaxTouchPoints > 0)
-            || (navigator.msMaxTouchPoints > 0));
     }
 
     // If it is a touch screen, use touches to play 
@@ -187,8 +133,8 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
         score = 0;
     }
 
-
     window.draw = () => {
+
         // Background image
         image(backgroundImage, 0, 0, width, height);
 
@@ -202,11 +148,12 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
         }
 
         cannon.show();
+        cannon.constraint();
 
         // If game is paused, return
         if (gamePaused) return;
 
-        cannon.constrain();
+        
 
         // If cannon is shooting, add new bullets
         if (cannon.getShoot()) {
@@ -246,9 +193,7 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
                 dir = -1;
             }
             asteroids.push(new Asteroid([x, y, r, dir, r + random(0,200)], asteroidImages));
-            counter = 0;
         }
-        counter++;
 
         // Manage asteroids
         if (asteroids.length > 0) {
@@ -277,7 +222,6 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
 
         // If cannon is hit, game over
         if (cannon.hits(asteroids)) {
-            updateTable("/sendData", "/updateTable", {"score":highScore});
             resetGame();
         };
 
@@ -285,6 +229,15 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
         if (score > highScore) {
             highScore = score;
         }
+
+        if (counter % 300 == 0 || cannon.hits(asteroids)){
+            console.log("update");
+            socket.emit("updateScore", {"score": highScore});
+            updateTable("/sendData");
+            counter = 0;
+        }
+        counter++;
+
         scoreP.html("High Score:" + highScore + "<br>Score:" + score);
     }
 })();

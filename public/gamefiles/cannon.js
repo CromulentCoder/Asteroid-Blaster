@@ -39,7 +39,7 @@ class Cannon {
     
     // Update the cannon's X coordinate
     updateX(X) {
-        this.x = X;
+        this.x = X - 20;
     }
 
     // Reset cannon's position to center bottom
@@ -77,15 +77,12 @@ class Cannon {
     }
 
     // Bound the cannon within the canvas boundary
-    constrain() {
-        this.x = constrain(this.x, -20, width - this.w + 20);
+    constraint() {
+        if (this.x + 20 <= 0) {
+            this.x = -20;
+        } else if (this.x + this.w - 15 >= width) {
+            this.x = width - this.w + 15;
+        }
     }
 
 }
-
-// Helper function to check if point lies on the ellipse or not
-const checkPoint = (h, k, x, y, r) => { 
-    p = (pow((x - h), 2) / pow(r, 2)) 
-            + (pow((y - k), 2) / pow(r, 2)); 
-    return p; 
-} 

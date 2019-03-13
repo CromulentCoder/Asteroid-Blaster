@@ -8,20 +8,31 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
 const express = require("express");
 
 const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
-const session = require("express-session");
+const expressSanitizer = require('express-sanitizer');
 const logger = require("morgan");
-
-// Template engine
-const pug = require("pug");
 
 // Secret for the session
 const secretJSON = require("./secret.json");
+// Create session
+const session = require("express-session")({
+    key: "user_id",
+    secret: secretJSON["secret"],
+    resave: true,
+    saveUninitialized: true,
+});
+// Create socket + express session
+const sharedsession = require("express-socket.io-session");
+
+// Template engine
+const pug = require("pug");
 
 // Database model
 const Sequelize = require("sequelize");
 const db = require("./highscore");
 const Scores = db.Scores;
+
+// Socket
+const socket = require('socket.io');
 
 // Instantiate app
 const app = express();
@@ -30,18 +41,24 @@ const app = express();
 app.set("view engine", "pug");
 app.set('views','./public/views');
 
-// Instantiate utility modules
+// Mount middlewares
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
-app.use(cookieParser());
+app.use(expressSanitizer());
 app.use(logger("dev"));
+app.use(session);
 
-app.use(session({
-    key: "user_id",
-    secret: secretJSON["secret"],
-    resave: false,
-    saveUninitialized: false,
+// Start server
+const PORT = process.env.PORT || 3000;
+const server = app.listen(PORT, () => {
+    console.log("Server listening on port " + PORT);
+})
+
+// Socket
+let io = socket(server);
+
+io.use(sharedsession(session, {
+    autoSave: true
     })
 );
 
@@ -49,20 +66,19 @@ app.use(session({
 app.use((req, res, next) => {
     if (req.session.user == undefined || req.session.user_id == undefined) {
       res.cookie("user_id", "", { expires: new Date()});      
+      res.cookie("io", "", { expires: new Date()});
     }
     next();
   });
 
-
 // Check for users with valid session
 const sessionChecker = (req, res, next) => {
     if (req.session.user && req.session.user_id) {
-        
         res.redirect("/game");
     } else {
         next();
     }    
-  };
+};
 
 app.use(express.static("public"));
 
@@ -73,8 +89,12 @@ app.route("/")
         res.sendFile(__dirname + "/public/form.html");
     })
     .post(sessionChecker, (req,res,next) => {
-        let name = req.body.name;
-        if (name == "") {
+        let name = req.sanitize(req.body.name);
+        let pattern = /^[\x20-\x7E]*$/;
+        if(!pattern.test(name)) {
+            name = "";
+        }
+        if (name == "" || name == undefined) {
             name = "Anonymous";
         }
         // Create new record
@@ -86,7 +106,7 @@ app.route("/")
             req.session.user_id = record.id;
             res.redirect("/game");
         }).catch(err => {
-            console.log(`ERROR ${err}`);
+            console.error(`ERROR ${err}`);
         });
     });
 
@@ -98,10 +118,10 @@ app.get("/game", (req,res) => {
             order: [["score", "DESC"],["name", "ASC"]],
             attributes: ["name", "score"],
             limit: 10
-        }).then(results => {
+        }).then(records => {
         // Render game
             res.render("game",{
-                "results": JSON.stringify(results)
+                "results": JSON.stringify(records)
             });
         }).catch(err => {
             console.log(`ERROR ${err}`);
@@ -119,8 +139,8 @@ app.get("/sendData", (req,res,next) => {
         order: [["score", "DESC"],["name", "ASC"]],
         attributes: ["name", "score"],
         limit: 10
-    }).then(results => {
-        let data = JSON.stringify(results);
+    }).then(records => {
+        let data = JSON.stringify(records);
         res.send(data);
     }).catch(err => {
         console.log(`ERROR ${err}`);
@@ -128,30 +148,69 @@ app.get("/sendData", (req,res,next) => {
 });
 
 // Fetch("POST")
-app.post("/updateTable", (req,res,next) => {
-    const Op = Sequelize.Op
-    Scores.update(
-        {
-            score:req.body.score
-        },
-        {
-            where:{
-                    id: req.session.user_id,
-                    score : {
-                        [Op.lt]: req.body.score
-                    }
-                }
-            },
-    ).then(count => {
-        res.send(count);
-    })
-    .catch(err => {
-        console.log(`ERROR ${err}`);
-    });
-});
+// app.post("/updateTable", (req,res,next) => {
+//     const Op = Sequelize.Op;
+//     Scores.update(
+//         {
+//             score:req.body.score
+//         },
+//         {
+//             where:{
+//                     id: req.session.user_id,
+//                     score : {
+//                         [Op.lt]: req.body.score
+//                     }
+//                 }
+//             },
+//     ).then(count => {
+//         res.send(count);
+//     })
+//     .catch(err => {
+//         console.log(`ERROR ${err}`);
+//     });
+// });
 
-// Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log("Server listening on port " + PORT);
-});
+
+let score = 0;
+let warning = 0;
+io.on("connection",
+    (client) => {
+        if (client.handshake.session.user_id != undefined) {
+            console.log(`A new client joined: ${client.id}`);
+
+            client.emit("start",{"score":0})
+
+            client.on("updateScore", (data) => {
+                console.log("DATA received:", data, score);
+                if (Math.abs(data.score - score) <= 1000) {
+                    score = data.score;
+                    let Op = Sequelize.Op;
+                    Scores.update({
+                            score: score
+                        },
+                        {
+                            where:{
+                                id: client.handshake.session.user_id,
+                                score : {
+                                    [Op.lt]: score
+                                }
+                            }
+                        },
+                    ).catch(err => {
+                        console.error(err);
+                    });
+                } else {
+                    warning++;
+                }
+                if (warning >= 3) {
+                    console.log("No cheating! :)");
+                    client.handshake.session.user_id = undefined;
+                    client.handshake.session.user = undefined;
+                    client.disconnect();
+                }
+            })
+            // When user disconnects
+            client.on("disconnect", () => console.log("Client has disconnected:", client.id));
+        }
+    }
+);
