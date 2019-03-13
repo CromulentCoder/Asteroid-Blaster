@@ -45,7 +45,7 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
         updateTable("/sendData");
 
         // socket = io.connect("localhost:3000");
-        socket = io.connect("https://asteroid-blaster.herokuapp.com/game");
+        socket = io.connect("https://asteroid-blaster.herokuapp.com/");
         socket.on("start", (data) => {
             score = data.score;
             highScore = data.score;
