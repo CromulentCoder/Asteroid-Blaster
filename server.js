@@ -66,7 +66,6 @@ io.use(sharedsession(session, {
 app.use((req, res, next) => {
     if (req.session.user == undefined || req.session.user_id == undefined) {
       res.cookie("user_id", "", { expires: new Date()});      
-      res.cookie("io", "", { expires: new Date()});
     }
     next();
   });
@@ -91,7 +90,7 @@ app.route("/")
     .post(sessionChecker, (req,res,next) => {
         let name = req.sanitize(req.body.name);
         let pattern = /^[\x20-\x7E]*$/;
-        if(!pattern.test(name)) {
+        if (!pattern.test(name)) {
             name = "";
         }
         if (name == "" || name == undefined) {
@@ -170,19 +169,18 @@ app.get("/sendData", (req,res,next) => {
 //     });
 // });
 
-
-let score = 0;
-let warning = 0;
 io.on("connection",
     (client) => {
+        let warning = 0;
+        let score = 0;
         if (client.handshake.session.user_id != undefined) {
             console.log(`A new client joined: ${client.id}`);
 
             client.emit("start",{"score":0})
 
             client.on("updateScore", (data) => {
-                console.log("DATA received:", data, score);
-                if (Math.abs(data.score - score) <= 1000) {
+                console.log(`Data received: ${data.score}\n Previous score: ${score}`);
+                if (data.score - score <= 1000) {
                     score = data.score;
                     let Op = Sequelize.Op;
                     Scores.update({
@@ -201,6 +199,7 @@ io.on("connection",
                     });
                 } else {
                     warning++;
+                    console.log(`FOUND CHEATING! WARNING NUMBER ${warning}`);
                 }
                 if (warning >= 3) {
                     console.log("No cheating! :)");
