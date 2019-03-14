@@ -5,6 +5,9 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
 */
 
 (function(){
+    // Distance l/r arrow keys move the cannon
+    const ARROW_MOVE_DIST = 30;
+
     // Start and pause game
     let gamePaused = false;
     let start = false;
@@ -155,6 +158,7 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
                 return false;
             }
         }
+        window.onkeydown = keyDownHandler;
     }
 
     // Resize canvas whenever window is resized
@@ -164,6 +168,22 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
         resizeCanvas(w, windowHeight*.90);
         if (cannon) {
             cannon.resetPos();
+        }
+    }
+
+    // Handle Arrow-Key cannon move
+    function keyDownHandler(ev) {
+        // Init game if not started
+        if (!start) {
+            start = true;
+            unpauseGame();
+            cannon.setShoot();
+        }
+
+        if (ev.key === "ArrowRight") {
+            cannon.moveRight(ARROW_MOVE_DIST);
+        } else if (ev.key === "ArrowLeft") {
+            cannon.moveLeft(ARROW_MOVE_DIST);
         }
     }
 

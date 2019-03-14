@@ -48,6 +48,14 @@ class Cannon {
         this.y = height - this.h;
     }
 
+    moveRight(distance) {
+        this.x = Math.min(width, this.x + distance);
+    }
+
+    moveLeft(distance) {
+        this.x = Math.max(0, this.x - distance);
+    }
+
     // Check if cannon hits the asteroid
     hits(asteroids) {
         for (let i = 0; i < asteroids.length; i++) {
