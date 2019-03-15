@@ -46,7 +46,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(expressSanitizer());
 app.use(logger("dev"));
+
 app.use(session);
+app.use( (req, res, next) => {
+    res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+    next();
+});
 
 // Start server
 const PORT = process.env.PORT || 3000;
@@ -64,15 +69,15 @@ io.use(sharedsession(session, {
 
 // Check if session cookie is still saved in browser and user is not set, then automatically log the user out.
 app.use((req, res, next) => {
-    if (req.session.user == undefined || req.session.user_id == undefined) {
-      res.cookie("user_id", "", { expires: new Date()});      
+    if (req.session.user_id == undefined) {
+        res.cookie("user_id", "", { expires: new Date(Number(new Date()) - 1000)});      
     }
     next();
   });
 
 // Check for users with valid session
 const sessionChecker = (req, res, next) => {
-    if (req.session.user && req.session.user_id) {
+    if (req.session.user_id) {
         res.redirect("/game");
     } else {
         next();
@@ -101,7 +106,6 @@ app.route("/")
             name: name,
             score: 0
         }).then(record => {
-            req.session.user = record.name;
             req.session.user_id = record.id;
             res.redirect("/game");
         }).catch(err => {
@@ -109,21 +113,22 @@ app.route("/")
         });
     });
 
+let hs;
+
 // Game route
 app.get("/game", (req,res) => {
-    if (req.session.user && req.session.user_id) { // Check if valid session
+    if (req.session.user_id) { // Check if valid session
         // Query top 10 scores
-        Scores.findAll({
-            order: [["score", "DESC"],["name", "ASC"]],
-            attributes: ["name", "score"],
-            limit: 10
-        }).then(records => {
-        // Render game
-            res.render("game",{
-                "results": JSON.stringify(records)
-            });
+        res.render("game", {results: true});
+        Scores.findOne({
+            attributes: ["score"],
+            where: {
+                id: req.session.user_id
+            }
+        }).then(record => {
+            hs = record.score;
         }).catch(err => {
-            console.log(`ERROR ${err}`);
+            console.error(`ERROR ${err}`)
         })
     } else {
         res.redirect("/");
@@ -142,69 +147,60 @@ app.get("/sendData", (req,res,next) => {
         let data = JSON.stringify(records);
         res.send(data);
     }).catch(err => {
-        console.log(`ERROR ${err}`);
+        console.error(`ERROR ${err}`);
     });
 });
-
-// Fetch("POST")
-// app.post("/updateTable", (req,res,next) => {
-//     const Op = Sequelize.Op;
-//     Scores.update(
-//         {
-//             score:req.body.score
-//         },
-//         {
-//             where:{
-//                     id: req.session.user_id,
-//                     score : {
-//                         [Op.lt]: req.body.score
-//                     }
-//                 }
-//             },
-//     ).then(count => {
-//         res.send(count);
-//     })
-//     .catch(err => {
-//         console.log(`ERROR ${err}`);
-//     });
-// });
 
 io.on("connection",
     (client) => {
         let warning = 0;
-        let score = 0;
+        let score = hs;
+        let prevTime = new Date().getTime();
+        let Op = Sequelize.Op;
         if (client.handshake.session.user_id != undefined) {
             console.log(`A new client joined: ${client.id}`);
-
-            client.emit("start",{"score":0})
-
+            client.emit("setScore", {
+                "score": 0,
+                "highScore": hs
+            });
             client.on("updateScore", (data) => {
-                console.log(`Data received: ${data.score}\n Previous score: ${score}`);
-                if (data.score - score <= 1000) {
-                    score = data.score;
-                    let Op = Sequelize.Op;
-                    Scores.update({
-                            score: score
-                        },
-                        {
-                            where:{
-                                id: client.handshake.session.user_id,
-                                score : {
-                                    [Op.lt]: score
-                                }
-                            }
-                        },
-                    ).catch(err => {
-                        console.error(err);
-                    });
-                } else {
-                    warning++;
-                    console.log(`FOUND CHEATING! WARNING NUMBER ${warning}`);
+                let receivedTime = new Date().getTime();
+                if (checkTime(prevTime, receivedTime)) {
+                    if (score < data.score){
+                        if (data.score - score < 60 * (receivedTime - prevTime) / 1000) {
+                            score = data.score;
+                            Scores.update({
+                                    score: score
+                                },
+                                {
+                                    where:{
+                                        id: client.handshake.session.user_id,
+                                        score : {
+                                            [Op.lt]: score
+                                        }
+                                    }
+                                },
+                            ).catch(err => {
+                                console.error(err);
+                            });
+                        } else {
+                            console.log(`ID:${client.handshake.session.user_id} FOUND CHEATING! WARNING NUMBER ${++warning}`);
+                        }
+                    }
+                    prevTime = receivedTime;
                 }
                 if (warning >= 3) {
-                    console.log("No cheating! :)");
+                    console.error(`Repeated Cheating! Deleting ID: ${client.handshake.session.user_id}`);
+                    Scores.destroy({
+                        where: {
+                            id: client.handshake.session.user_id
+                        }
+                    }).then(count => {
+                        console.log(`Deleted ${count} record(s)`);
+                    }).catch(err => {
+                        console.error(`Failed to delete ID ${client.handshake.session.user_id}`);
+                    });
                     client.handshake.session.user_id = undefined;
-                    client.handshake.session.user = undefined;
                     client.disconnect();
                 }
             })
@@ -213,3 +209,10 @@ io.on("connection",
         }
     }
 );
+
+const checkTime = (prevTime, newTime) => {
+    if (newTime - prevTime >= 2800) {
+        return true;
+    }
+    return false;
+}

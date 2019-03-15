@@ -1,3 +1,13 @@
+/* Helper file for the game
+
+Made by Cromulent Coder (https://github.com/CromulentCoder)
+
+*/
+
+// DOM elements for the table
+let table;
+let tbody; 
+
 // Create the type of element you pass in the parameters
 const createNode = (element) => {
     return document.createElement(element); 

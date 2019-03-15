@@ -23,10 +23,7 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
     let scoreP;
     let highScore;
     let score;
-
-    // DOM elements for creating the table
-    let table;
-    let tbody; 
+    let scoreToSend = 0;
 
     // Graphics
     let cannonAnimation = [];
@@ -46,10 +43,12 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
 
         // socket = io.connect("localhost:3000");
         socket = io.connect("https://asteroid-blaster.herokuapp.com/");
-        socket.on("start", (data) => {
+        socket.on("setScore", (data) => {
             score = data.score;
-            highScore = data.score;
+            highScore = data.highScore;
+            scoreToSend = data.highScore;  
         });
+
     }
 
     // Initialize objects
@@ -60,6 +59,12 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
         let w = canvasParent.offsetWidth * .9;
         canvas = createCanvas(w, windowHeight*.90).addClass("col-11");
         canvas.parent(canvasParent);
+
+        frameRate(60);
+        setInterval(() => {
+            socket.emit("updateScore", {"score": scoreToSend});
+            updateTable("/sendData");
+          }, 3000); 
 
         // Initialize cannon object
         cannon = new Cannon(cannonAnimation);
@@ -116,7 +121,7 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
 
     // Pause game
     const pauseGame = () =>{
-        gamePaused = true; 
+        gamePaused = true;
     }
 
     // Unpause game
@@ -194,7 +199,9 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
                 dir = -1;
             }
             asteroids.push(new Asteroid([x, y, r, dir, r + random(0,200)], asteroidImages));
+            counter = 0;
         }
+        counter++;
 
         // Manage asteroids
         if (asteroids.length > 0) {
@@ -229,15 +236,8 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
         // Update DOM elements
         if (score > highScore) {
             highScore = score;
+            scoreToSend = score;
         }
-
-        if (counter % 300 == 0 || cannon.hits(asteroids)){
-            console.log("update");
-            socket.emit("updateScore", {"score": highScore});
-            updateTable("/sendData");
-            counter = 0;
-        }
-        counter++;
 
         scoreP.html("High Score:" + highScore + "<br>Score:" + score);
     }
