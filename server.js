@@ -151,23 +151,41 @@ app.get("/sendData", (req,res,next) => {
     });
 });
 
+// Socket connection
 io.on("connection",
     (client) => {
+        // Client variables 
         let warning = 0;
+
+        // Client highscore up till now
         let score = hs;
+        
+        // Date to join
         let prevTime = new Date().getTime();
+        
         let Op = Sequelize.Op;
+        
         if (client.handshake.session.user_id != undefined) {
             console.log(`A new client joined: ${client.id}`);
+            
+            // Initialize score for the client
             client.emit("setScore", {
                 "score": 0,
                 "highScore": hs
             });
+
+            // Update client score
             client.on("updateScore", (data) => {
                 let receivedTime = new Date().getTime();
+                
+                // Check difference between the two times 
                 if (checkTime(prevTime, receivedTime)) {
+
+                    // If new score is more than current high score
                     if (score < data.score){
-                        if (data.score - score < 60 * (receivedTime - prevTime) / 1000) {
+
+                        // Check if it is possible to get that much score in delta time
+                        if (data.score - score < 60 * (receivedTime - prevTime) / 1000) { // If true
                             score = data.score;
                             Scores.update({
                                     score: score
@@ -183,12 +201,16 @@ io.on("connection",
                             ).catch(err => {
                                 console.error(err);
                             });
-                        } else {
+                        } else { // If not, user is cheating
                             console.log(`ID:${client.handshake.session.user_id} FOUND CHEATING! WARNING NUMBER ${++warning}`);
                         }
                     }
+
+                    // Set prev time as last recieved time
                     prevTime = receivedTime;
                 }
+
+                // If user is cheating repeatedly delete that account
                 if (warning >= 3) {
                     console.error(`Repeated Cheating! Deleting ID: ${client.handshake.session.user_id}`);
                     Scores.destroy({
@@ -210,6 +232,7 @@ io.on("connection",
     }
 );
 
+// Utility funciton to check difference between two times
 const checkTime = (prevTime, newTime) => {
     if (newTime - prevTime >= 2800) {
         return true;
