@@ -41,6 +41,7 @@ An arcade style, highly addictive game made using HTML5 canvas and p5js.The game
 - [x] ~Graphics~
 - [x] ~Mobile support/ Responsive~
 - [x] ~Global Leaderboard~
+- [x] ~Anti-Cheat mechanism~
 
 If you have any suggestions for a feature or would like to help me add some features feel free to contact me.
 
