@@ -15,6 +15,7 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
     // Game objects
     let cannon;
     let asteroids = [];
+    let powerups = [];
     let counter = 0;
     let bullets = [];
 
@@ -30,6 +31,26 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
     let asteroidImages = []; 
     let backgroundImage;
 
+    // Pause game
+    const pauseGame = () =>{
+        gamePaused = true;
+    }
+
+    // Unpause game
+    const unpauseGame = () => {
+        gamePaused = false;
+    }
+
+    // Start the game over and reinitialize everything
+    const resetGame = () =>{
+        start = false;
+        cannon = new Cannon(cannonAnimation);
+        asteroids = [];
+        bullets = [];
+        counter = 0;
+        score = 0;
+    }
+
     // Load the images
     window.preload = () => {
         for (let i = 0; i < 13; i++) {
@@ -41,8 +62,8 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
         
         updateTable("/sendData");
 
-        // socket = io.connect("localhost:3000");
-        socket = io.connect("https://asteroid-blaster.herokuapp.com/");
+        socket = io.connect("localhost:3000");
+        // socket = io.connect("https://asteroid-blaster.herokuapp.com/");
         socket.on("setScore", (data) => {
             score = data.score;
             highScore = data.highScore;
@@ -119,26 +140,6 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
         }
     }
 
-    // Pause game
-    const pauseGame = () =>{
-        gamePaused = true;
-    }
-
-    // Unpause game
-    const unpauseGame = () => {
-        gamePaused = false;
-    }
-
-    // Start the game over and reinitialize everything
-    const resetGame = () =>{
-        start = false;
-        cannon = new Cannon(cannonAnimation);
-        asteroids = [];
-        bullets = [];
-        counter = 0;
-        score = 0;
-    }
-
     window.draw = () => {
 
         // Background image
@@ -159,7 +160,22 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
         // If game is paused, return
         if (gamePaused) return;
 
-        
+        if (random() < 0.01) {
+            powerups.push(new Bubble());
+        }
+
+        if (powerups.length > 0) {
+            for (let i = powerups.length - 1; i >= 0; i--) {
+                powerups[i].show();
+                powerups[i].update();
+
+                if ((powerups[i].offScreen())) {
+                    powerups.splice(i,1);
+                    // console.log(powerups.length);
+                    continue;
+                }
+            }     
+        }
 
         // If cannon is shooting, add new bullets
         if (cannon.getShoot()) {

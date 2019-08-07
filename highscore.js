@@ -8,14 +8,13 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
 const Sequelize = require('sequelize');
 
 // create a sequelize instance with my DB information.
-const sequelize = new Sequelize(process.env.DATABASE_URL);
+// const sequelize = new Sequelize(process.env.DATABASE_URL);
 
 // DEV Instance
-// const sequelize = new Sequelize('asteroid_blaster', 'root', '', {
-//     host: 'localhost',
-//     dialect: 'mysql',
-//     operatorsAliases: false,
-// });
+const sequelize = new Sequelize('asteroid_blaster', 'root', '', {
+    host: 'localhost',
+    dialect: 'mysql',
+});
 
 // setup User model and its fields.
 let Scores = sequelize.define('scores', {
