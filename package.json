@@ -2,7 +2,7 @@
   "name": "asteroid-blaster",
   "version": "1.0.0",
   "description": "Arcade game to destroy asteroids using a cannon",
-  "main": ".\\server\\server.js",
+  "main": "server/server.js",
   "dependencies": {
     "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
@@ -20,8 +20,8 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node .\\server\\server.js",
-    "dev": "nodemon .\\server\\server.js"
+    "start": "node server/server.js",
+    "dev": "nodemon server/server.js"
   },
   "repository": {
     "type": "git",
