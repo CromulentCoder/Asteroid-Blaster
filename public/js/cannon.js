@@ -75,7 +75,6 @@ class Cannon {
     // Display the cannon
     show() {
         stroke(125);
-        line(this.x + this.w - 5, this.y, this.x + this.w - 5, this.y + this.h);
         if (this.shoot == true) {
             image(this.explosion[this.explosionIndex % this.explosion.length] , this.x + this.w / 3, this.y - 20, this.w * 0.3, this.h * 0.5);
             image(this.animation[this.animationIndex % this.animation.length] , this.x, this.y, this.w, this.h);
@@ -90,8 +89,8 @@ class Cannon {
     constraint() {
         if (this.x + 20 <= 0) {
             this.x = -20;
-        } else if (this.x + this.w - 5 > width) {
-            this.x = width - this.w - 5;
+        } else if (this.x + this.w - 3 > width) {
+            this.x = width - this.w - 3;
         }
     }
 
