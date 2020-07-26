@@ -7,27 +7,26 @@ html
         script(language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js")
         script(language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/p5.min.js")
         script(language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/addons/p5.dom.min.js")
-        script(language="javascript" type="text/javascript" src="gamefiles/helper.js")
-        script(language="javascript" type="text/javascript" src="gamefiles/sketch.js")
-        script(language="javascript" type="text/javascript" src="gamefiles/cannon.js")
-        script(language="javascript" type="text/javascript" src="gamefiles/bullet.js")
-        script(language="javascript" type="text/javascript" src="gamefiles/asteroid.js")
-        script(language="javascript" type="text/javascript" src="gamefiles/powerup.js")
+        script(language="javascript" type="text/javascript" src="js/helper.js")
+        script(language="javascript" type="text/javascript" src="js/sketch.js")
+        script(language="javascript" type="text/javascript" src="js/cannon.js")
+        script(language="javascript" type="text/javascript" src="js/bullet.js")
+        script(language="javascript" type="text/javascript" src="js/asteroid.js")
+        script(language="javascript" type="text/javascript" src="js/powerup.js")
         link(rel='stylesheet' type='text/css' href='css/style.css')
     body
         .row.container
-            #canvascontainer.canvas-container.col-7
-            .scores-container.col-3
-                if results
-                    table.table 
-                        thead.table-header
-                            tr
-                                td(colspan =3 style = "text-align:center") Global Leaderboard
-                            tr
-                                td #
-                                td Name 
-                                td Score
-                        tbody.table-content
+            #canvascontainer.canvas-container.col-9
+            .scores-container.col-2
+                table.table 
+                    thead.table-header
+                        tr
+                            td(colspan =3 style = "text-align:center") Global Leaderboard
+                        tr
+                            td #
+                            td Name 
+                            td Score
+                    tbody.table-content
         .footer.row 
             .col-12
                 h3
