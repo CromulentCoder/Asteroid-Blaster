@@ -7,6 +7,11 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
 (function(){
     // Create a socket
     let socket;
+    const initSocket = async () => {
+        let url = await getSocketUrl();
+        socket = io.connect(url, {transports: ['websocket']});
+    };
+    initSocket();
 
     // Start and pause game
     let gamePaused = false;
@@ -65,9 +70,6 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
         
         highScore = 0;
         score = 0;
-
-        socket = io.connect("localhost:3000",  {transports: ['websocket']});
-        // socket = io.connect("https://asteroid-blaster.herokuapp.com/");
     }
 
     const emitScore = () => {

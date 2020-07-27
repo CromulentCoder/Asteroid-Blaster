@@ -18,6 +18,11 @@ const appendElement = (parent, el) => {
     return parent.appendChild(el); 
 }
 
+const getSocketUrl = async () => {
+    fetch('/getSocketUrl')
+    .then(data => data);
+}
+
 // Function to get data from database
 const updateTable = (data) => {
     table = document.getElementsByTagName("table")[0];

@@ -10,6 +10,5 @@ config.DATABASE_USERNAME = "root";
 config.DATABASE_PASSWORD = "";
 config.DATABASE_OPTIONS = {host: 'localhost',dialect: 'mysql'};
 
-config.ENV = process.env.NODE_ENV;
-
+config.ENV = process.env.ENV || null;
 module.exports = config;
