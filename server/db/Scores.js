@@ -10,7 +10,7 @@ const Sequelize = require('sequelize');
 
 // create a connection instance with my DB information.
 let connection;
-if (config.connectionString) connection = new Sequelize(connectionString);
+if (config.DATABASE_URL) connection = new Sequelize(config.DATABASE_URL);
 else connection = new Sequelize(config.DATABASE, config.DATABASE_USERNAME, config.DATABASE_PASSWORD, config.DATABASE_OPTIONS);
 
 
