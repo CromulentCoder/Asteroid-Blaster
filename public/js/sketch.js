@@ -7,9 +7,23 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
 (function(){
     // Create a socket
     let socket;
+
+    const emitConnect = () => {
+        socket.emit("connected", {});
+    }
+
+    const emitScore = () => {
+        socket.emit("updateScore", {"score": highScore});
+    }
+
     const initSocket = async () => {
         let url = await getSocketUrl();
         socket = io.connect(url, {transports: ['websocket']});
+        emitConnect();
+        
+        socket.on("updateTable", data => {
+            updateTable(data);
+        });
     };
     initSocket();
 
@@ -20,7 +34,6 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
     // Game objects
     let cannon;
     let asteroids = [];
-    let powerups = [];
     let counter = 0;
     let bullets = [];
 
@@ -72,25 +85,16 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
         score = 0;
     }
 
-    const emitScore = () => {
-        socket.emit("updateScore", {"score": highScore});
-    }
-
     // Initialize objects
     window.setup =  () => {
 
         // Create canvas
         let canvasParent = document.getElementById("canvascontainer");
-        let w = canvasParent.offsetWidth * .9;
-        canvas = createCanvas(w, windowHeight*.90).addClass("col-11");
+        let w = canvasParent.offsetWidth;
+        canvas = createCanvas(w, windowHeight * 0.9)
         canvas.parent(canvasParent);
 
         frameRate(60);    
-
-        socket.on("updateTable", data => {
-            updateTable(data);
-        });
-        
 
         // Initialize cannon object
         cannon = new Cannon(cannonAnimation, bulletAnimation);
@@ -100,15 +104,15 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
         scoreP.parent(canvasParent);
     }
 
-    // If it is a touch screen, use touches to play     
+    // If it is a touch screen, use touches to play
     window.touchMoved = () => {
-    if (touches[0].x >0 && touches[0].x < width && touches[0].y > 0 && touches[0].y < height){ // Check if touches within canvas
+        if (touches[0].x >0 && touches[0].x < width && touches[0].y > 0 && touches[0].y < height){ // Check if touches within canvas
             if (start == false) {
                 start = true;
                 unpauseGame();
             }
             cannon.setX(touches[0].x);
-            // cannon.setShoot(true);
+            cannon.setShoot(true);
             return false;
         }
     }
@@ -136,8 +140,8 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
     // Resize canvas whenever window is resized
     window.windowResized = () =>{
         let canvasParent = document.getElementById("canvascontainer");
-        let w = canvasParent.offsetWidth * .9;
-        resizeCanvas(w, windowHeight*.90);
+        let w = canvasParent.offsetWidth;
+        resizeCanvas(w, windowHeight * 0.9);
         if (cannon) {
             cannon.resetPos();
         }
@@ -151,7 +155,8 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
         // Pause game until started
         if (start == false) {
             pauseGame();
-            stroke(0);
+            stroke(255);
+            strokeWeight(1);
             fill(255);
             textAlign(CENTER);
             textSize(24);
@@ -192,8 +197,9 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
         if ((counter % 300 == 0 || asteroids.length == 0) && counter!= 0) {
             let rand = floor(random(2));
             let x, dir;
-            let y = random(50,150);
-            let r = floor(random(50,100));
+            let y = random(0, height / 2);
+            let r = floor(random(width / 8, width / 4));
+            let mass =  r + random(0, score / 10);
             if (rand == 0) {
                 x = -r / 2;
                 dir = 1;
@@ -201,7 +207,7 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
                 x = width + r / 2 ;
                 dir = -1;
             }
-            asteroids.push(new Asteroid([x, y, r, dir, r + random(0,200)], asteroidImages[floor(random(asteroidImages.length))]));
+            asteroids.push(new Asteroid([x, y, r, dir, mass], asteroidImages[floor(random(asteroidImages.length))]));
             counter = 0;
         }
         counter++;
@@ -220,7 +226,7 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
                     let mass = asteroids[i].getInitialMass();
                     let image = asteroids[i].getImage();
                     asteroids.splice(i,1);
-                    if (r / 2 >= 30) {
+                    if (r / 2 >= (width / 10)) {
                         asteroids.push(new Asteroid([x - r / 2, min(y, 3 * cannon.getTop()[1]), r / 2, -1, mass / 2], image));
                         asteroids.push(new Asteroid([x + r / 2, min(y, 3 * cannon.getTop()[1]), r / 2, 1, mass / 2], image));
                     }

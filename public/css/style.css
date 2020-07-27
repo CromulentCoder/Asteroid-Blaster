@@ -25,12 +25,19 @@ body {
 
 .container {
     height: 100%;
-    min-height: 100%;
+    text-align: center;
 }
 
-[class*="col-"] {
-    float: left;
-    padding: 1.5%;
+.canvas-container {
+    display: inline-block;
+    position: relative;
+    margin-top: 1rem;
+}
+
+@media only screen and (max-width: 700px) {
+    canvas {
+        height: 90%;
+    }
 }
 
 .col-1 {width: 8.33%;}
@@ -46,31 +53,18 @@ body {
 .col-11 {width: 91.66%;}
 .col-12 {width: 100%;}
 
-@media only screen and (max-width: 500px) and (min-width: 300px) {
+@media only screen and (max-width: 700px) {
   /* For mobile phones: */
-  [class*="col-"] {
-    width: 95%;
-    padding-left: 2.5%;
-  }
+    [class*="col-"] {
+        width: 95%;
+    }
 }
 
-@media only screen and (max-width: 700px) and (min-width: 500px) {
-    .col-1,.col-2,.col-3,.col-4 {
-        width: 85%;
-        padding-left: 2.5%;
-    }
-    .col-5,.col-6, .col-7,.col-8,.col-9,.col-10,.col-11,.col-12 {
-        width: 85%;
-        padding-left: 2.5%;
-    }
-
-}
-  
 .canvas-score{
-    min-width: 10%;
     position: absolute;
-    margin-left: 1%;
-    padding: 2%;
+    text-align: left;
+    top: 0;
+    left: 0;
     color: white;
     font-size: 1.2rem;
     font-weight: 400;
@@ -79,7 +73,6 @@ body {
 .scores-container {
     justify-content: center;
     margin-top: .2%;
-    /* margin-right: 2%; */
 }
 
 .table {
@@ -125,18 +118,8 @@ tr:hover td{
 }
 
 .footer{
-    /* padding: 2px 16px; */
     color: white;
     width: 100%;
     text-align: center;
     margin: 2%;
 }
-
-@media only screen and (max-width: 750) {
-    /* .canvas-container, .scores-container {
-        align-content: center;
-        justify-content: center;
-        display: block;
-        vertical-align:top;
-    } */
-} 

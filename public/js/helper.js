@@ -48,13 +48,6 @@ const updateTable = (data) => {
     tbody = newTbody;
 }
 
-// Check if it is a touch screen or not
-const isTouchScreen = () => {
-    return (('ontouchstart' in window)
-        || (navigator.MaxTouchPoints > 0)
-        || (navigator.msMaxTouchPoints > 0));
-}
-
 // Helper function to check if point lies on the ellipse or not
 const checkPoint = (h, k, x, y, r) => { 
     return (pow((x - h), 2) + pow((y - k), 2) ) / pow(r, 2);

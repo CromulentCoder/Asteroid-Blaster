@@ -1,10 +1,17 @@
 const session = require("../controller/session");
 const db = require("../db/Scores");
 
+const clientConnect = (socket) => {
+    socket.on("connected", () => {
+        console.log("CONNECTED!!!!");
+        emitHighScoresData(socket);
+    })
+}
+
 const emitHighScoresData = async (socket) => {
     let data = await db.getHighScores();
     socket.emit("updateTable", data);
-    setTimeout(emitHighScoresData, 5000, socket);
+    setTimeout(emitHighScoresData, 1000 * 60, socket);
 }
 
 const updateClientScore =  (socket) => {
@@ -26,8 +33,8 @@ module.exports = (io) => {
         if (socket.handshake.session.user_id) {
             console.debug(`A new socket joined: ${socket.id}`);
             
-            emitHighScoresData(socket);
-            
+            clientConnect(socket);
+
             updateClientScore(socket);
             
             disconnectClient(socket);
