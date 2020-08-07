@@ -194,11 +194,13 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
         }
 
         // Keep adding asteroids every so often OR if no asteroids on screen
-        if ((counter % 300 == 0 || asteroids.length == 0) && counter!= 0) {
+        if (((counter % floor(300 + (600 - width) * 0.1)) == 0 || asteroids.length == 0) && counter!= 0) {
             let rand = floor(random(2));
             let x, dir;
             let y = random(0, height / 2);
-            let r = floor(random(width / 8, width / 4));
+            let r;
+            if (width < 550) r = floor(random(width * 0.1, width * 0.2));
+            else r = floor(random(width * 0.05, width * 0.15 ));
             let mass =  r + random(0, score / 10);
             if (rand == 0) {
                 x = -r / 2;
@@ -226,7 +228,7 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
                     let mass = asteroids[i].getInitialMass();
                     let image = asteroids[i].getImage();
                     asteroids.splice(i,1);
-                    if (r / 2 >= (width / 10)) {
+                    if ((width < 550 && r / 2 >= width * 0.06) || (width >= 550 && r / 2 >= width * 0.04)) {
                         asteroids.push(new Asteroid([x - r / 2, min(y, 3 * cannon.getTop()[1]), r / 2, -1, mass / 2], image));
                         asteroids.push(new Asteroid([x + r / 2, min(y, 3 * cannon.getTop()[1]), r / 2, 1, mass / 2], image));
                     }

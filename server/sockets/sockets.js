@@ -3,7 +3,6 @@ const db = require("../db/Scores");
 
 const clientConnect = (socket) => {
     socket.on("connected", () => {
-        console.log("CONNECTED!!!!");
         emitHighScoresData(socket);
     })
 }
