@@ -22,9 +22,11 @@ router.use(sess);
 // Default route
 router.route("/", cacheClear)
     .get((req,res,next) => {
+        console.log("Sending welcome screen");
         res.sendFile(path.resolve("public/form.html"));
     })
     .post(addRecord, (req,res) => {
+        console.log("Post received, record added");
         res.redirect("/game");
     });
 

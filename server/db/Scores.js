@@ -36,13 +36,15 @@ let Scores = connection.define('scores', {
 
 
 // Create new record
-const createRecord = async (name) => {
-    return Scores.create({
+const createRecord = (name) => {
+    console.log("In createRecord");
+    let done = Scores.create({
         name: name,
         score: 0
     }).catch(err => {
-        return err;
+        console.log("Error while creating record", err);
     });
+    console.log("Done creating");
 }
 
 const getHighScore = (id) => {
