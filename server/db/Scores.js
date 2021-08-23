@@ -44,6 +44,17 @@ const createRecord = async (name) => {
     });
 }
 
+const getHighScore = (id) => {
+    return Scores.findOne({
+        where:{
+            id: id
+        }
+    }).catch(err => {
+        return err;
+    });
+}
+
+
 const getHighScores = () => {
     return Scores.findAll({
         order: [["score", "DESC"],["name", "ASC"]],
@@ -84,4 +95,4 @@ connection.sync()
     .catch(error => console.log('This error occured:', error));
 
 // export Scores model.
-module.exports = {createRecord, getHighScores, updateRecord, deleteRecord};
+module.exports = {createRecord, getHighScore, getHighScores, updateRecord, deleteRecord};

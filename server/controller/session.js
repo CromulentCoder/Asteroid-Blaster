@@ -11,11 +11,11 @@ const session = expressSession({
     saveUninitialized: true,
 });
 
-const ioSession = (session) => {
+const ioSession = (socketSession) => {
     console.log("In ioSession");
     return sharedSession(
-    session, {
-    autoSave: true
+    socketSession, {
+        autoSave: true
     });
 }
 

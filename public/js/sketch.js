@@ -46,7 +46,8 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
     // Graphics
     let cannonAnimation = [];
     let bulletAnimation = [];
-    let asteroidImages = []; 
+    let asteroidImages = [];
+    let bulletImage; 
     let backgroundImage;
 
     // Pause game
@@ -244,7 +245,7 @@ Made by Cromulent Coder (https://github.com/CromulentCoder)
         if (cannon.hits(asteroids)) {
             resetGame();
             emitScore();
-        };
+        }
 
         // Update DOM elements
         if (score > highScore) highScore = score;

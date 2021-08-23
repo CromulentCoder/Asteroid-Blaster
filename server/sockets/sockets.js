@@ -10,12 +10,20 @@ const clientConnect = (socket) => {
 const emitHighScoresData = async (socket) => {
     let data = await db.getHighScores();
     socket.emit("updateTable", data);
-    setTimeout(emitHighScoresData, 1000 * 60, socket);
+    setTimeout(emitHighScoresData, 1000 * 60 * 10, socket);
 }
 
-const updateClientScore =  (socket) => {
-    socket.on("updateScore", (data) => {
-        score = data.score;
+const updateClientScore = (socket) => {
+    socket.on("updateScore", async (data) => {
+        let previousRecord = await db.getHighScore(socket.handshake.session.user_id);
+        let previousScore = previousRecord.score;
+        let previousUpdatedAt = previousRecord.updatedAt;
+        let currDate = new Date();
+        let diff = previousUpdatedAt == null ? 0 : (currDate - previousUpdatedAt) / 1000;
+        let score = data.score;
+        if ((previousScore == 0 && diff > 10000)|| previousScore != 0 && score - previousScore > diff * 100) {
+            return;
+        }
         db.updateRecord(socket.handshake.session.user_id, score);
     });
 }
