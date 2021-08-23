@@ -5,13 +5,9 @@ const addRecord = async (req, res, next) => {
     console.log("In addrecord");
     let name = sanitizer.sanitizeName(req, req.body.name);
     console.log("Sanitized name");
-    try {
-        const record = await scores.createRecord(name);
-        console.log("Record received");
-        req.session.user_id = record.id;
-    } catch (err) {
-        console.log("Error at createRecord:",err);
-    }
+    const record = await scores.createRecord(name);
+    console.log("Record received");
+    req.session.user_id = record.id;
     console.log("Moving to next");
     next();
 }
