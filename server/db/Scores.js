@@ -37,14 +37,12 @@ let Scores = connection.define('scores', {
 
 // Create new record
 const createRecord = (name) => {
-    console.log("In createRecord");
-    let done = Scores.create({
+    return Scores.create({
         name: name,
         score: 0
     }).catch(err => {
-        console.log("Error while creating record", err);
+        return err;
     });
-    console.log("Done creating");
 }
 
 const getHighScore = (id) => {
