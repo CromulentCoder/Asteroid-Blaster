@@ -10,15 +10,16 @@ const Sequelize = require('sequelize');
 
 // create a connection instance with my DB information.
 let connection;
-if (config.DATABASE_URL) connection = new Sequelize(config.DATABASE_URL);
-else connection = new Sequelize(config.DATABASE, config.DATABASE_USERNAME, config.DATABASE_PASSWORD, config.DATABASE_OPTIONS);
-
-
-// DEV Instance
-// const connection = new Sequelize('asteroid_blaster', 'root', '', {
-//     host: 'localhost',
-//     dialect: 'mysql',
-// });
+if (config.DATABASE_URL) {
+    console.log("Connecting using database url");
+    connection = new Sequelize(config.DATABASE_URL);
+    console.log(connection);
+}
+else {
+    console.log("Connecting using database details");
+    connection = new Sequelize(config.DATABASE, config.DATABASE_USERNAME, config.DATABASE_PASSWORD, config.DATABASE_OPTIONS);
+    console.log(connection);
+}
 
 // setup User model and its fields.
 let Scores = connection.define('scores', {

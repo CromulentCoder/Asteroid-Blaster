@@ -5,6 +5,7 @@ const addRecord = async (req, res, next) => {
     let name = sanitizer.sanitizeName(req, req.body.name);
     const record = await scores.createRecord(name);
     req.session.user_id = record.id;
+    console.log(record);
     next();
 }
 
