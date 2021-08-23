@@ -40,9 +40,7 @@ const createRecord = (name) => {
     return Scores.create({
         name: name,
         score: 0
-    }).catch(err => {
-        return err;
-    });
+    })
 }
 
 const getHighScore = (id) => {
