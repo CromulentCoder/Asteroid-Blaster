@@ -13,12 +13,12 @@ let connection;
 if (config.DATABASE_URL) {
     console.log("Connecting using database url");
     connection = new Sequelize(config.DATABASE_URL);
-    console.log(connection);
+    console.log("Connection successfull");
 }
 else {
     console.log("Connecting using database details");
     connection = new Sequelize(config.DATABASE, config.DATABASE_USERNAME, config.DATABASE_PASSWORD, config.DATABASE_OPTIONS);
-    console.log(connection);
+    console.log("Connection successfull");    
 }
 
 // setup User model and its fields.
@@ -48,9 +48,7 @@ const getHighScore = (id) => {
         where:{
             id: id
         }
-    }).catch(err => {
-        return err;
-    });
+    })
 }
 
 
@@ -59,9 +57,7 @@ const getHighScores = () => {
         order: [["score", "DESC"],["name", "ASC"]],
         attributes: ["name", "score"],
         limit: 10
-    }).catch(err => {
-        return err;
-    });
+    })
 }
 
 const updateRecord = (id, score) => {
@@ -72,9 +68,7 @@ const updateRecord = (id, score) => {
         where:{
             id: id
         }
-    }).catch(err => {
-        return err;
-    });
+    })
 }
 
 const deleteRecord = (id) => {
@@ -83,9 +77,6 @@ const deleteRecord = (id) => {
             id: id
         }
     })
-    .catch(err => {
-        console.error(`Failed to delete ID ${client.handshake.session.user_id}`);
-    });
 }
 
 // create all the defined tables in the specified database.
